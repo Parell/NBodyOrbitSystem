@@ -9,7 +9,7 @@ public class OrbitTrajectory : MonoBehaviour
     public float timeStep;
     public OrbitalBody referenceFrame;
 
-    private void FixedUpdate()
+    private void Update()
     {
         DrawOrbits();
     }
