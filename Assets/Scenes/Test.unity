@@ -341,114 +341,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3035d1340448e624285a06d9465a1835, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numSteps: 20000
-  timeStep: 1
+  numSteps: 2108
+  timeStep: 0.1
   referenceFrame: {fileID: 1621122684}
---- !u!1 &356314307
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 356314308}
-  - component: {fileID: 356314311}
-  - component: {fileID: 356314310}
-  - component: {fileID: 356314309}
-  m_Layer: 0
-  m_Name: Cube
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &356314308
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 356314307}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 585160233}
-  m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &356314309
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 356314307}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!23 &356314310
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 356314307}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 5f3d6a0de3495be45a617031d638fbbc, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &356314311
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 356314307}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &451366356
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,7 +354,6 @@ GameObject:
   m_Component:
   - component: {fileID: 451366357}
   - component: {fileID: 451366358}
-  - component: {fileID: 451366359}
   m_Layer: 0
   m_Name: Vessel
   m_TagString: Untagged
@@ -475,7 +369,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 451366356}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -7357}
+  m_LocalPosition: {x: 0, y: 0, z: 6566}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -497,7 +391,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 10000
   velocity:
-    x: 290
+    x: -249.1
     y: 0
     z: 0
   position:
@@ -505,7 +399,7 @@ MonoBehaviour:
     y: 0
     z: 0
   keplerianElements:
-    parent: {fileID: 0}
+    parent: {fileID: 1621122684}
     specificMechanicalEnergy: 0
     semiMajorAxis: 0
     eccentricity: 0
@@ -519,39 +413,6 @@ MonoBehaviour:
       z: 0
   drawTrajectory: 1
   scaledObject: {fileID: 585160232}
---- !u!114 &451366359
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 451366356}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b3d8f44e924f14429b4b6c43e8a2f9a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maneuvers:
-  - deltaV:
-      x: 90
-      y: 0
-      z: 0
-    startTime: 212
-    burnTime: 0
-    done: 0
-  - deltaV:
-      x: -10.5
-      y: 25.5
-      z: -2.71
-    startTime: 19276
-    burnTime: 0
-    done: 0
-  target: {fileID: 0}
-  steeringMode: 0
-  numSteps: 70000
-  timeStep: 2
-  centralBody: {fileID: 1621122684}
-  thisOrbitalBody: {fileID: 451366358}
 --- !u!1 &585160232
 GameObject:
   m_ObjectHideFlags: 0
@@ -579,8 +440,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 356314308}
+  m_Children: []
   m_Father: {fileID: 1196629997}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -827,7 +687,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 909deabc7d2054347b852d426e1c18a1, type: 2}
+  - {fileID: 2100000, guid: 5f3d6a0de3495be45a617031d638fbbc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1074,7 +934,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 6.094853992178955e+18
   velocity:
-    x: 50
+    x: 0
     y: 0
     z: 0
   position:
@@ -1238,10 +1098,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d6ec000e9a5bb340aa98347b25e7516, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10000
-  minSpeed: 0.1
-  maxSpeed: 10000000
-  scrollPower: 10
+  focus: {fileID: 451366357}
+  distance: 20
+  focusRadius: 1
+  focusCentering: 0.5
+  rotationSpeed: 338
+  minVerticalAngle: -70
+  maxVerticalAngle: 70
+  alignDelay: 5
+  alignSmoothRange: 45
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 55
 --- !u!1 &2082722369
 GameObject:
   m_ObjectHideFlags: 0

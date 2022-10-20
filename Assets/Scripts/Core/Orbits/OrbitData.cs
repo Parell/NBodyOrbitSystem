@@ -58,6 +58,12 @@ public class KeplerianElements
     public void ToKeplerian(Vector3d r, Vector3d v)
     {
         if (parent == null) return;
+
+        // set referance frame
+        
+        // Vector3d r = new Vector3d(position.x, position.y, position.z);
+        // Vector3d v = new Vector3d(velocity.x, velocity.y, velocity.z);
+
         specificMechanicalEnergy = (Mathd.Pow(v.magnitude, 2) / 2) - ((parent.mass * Constants.G) / r.magnitude);
         semiMajorAxis = (-(parent.mass * Constants.G) / specificMechanicalEnergy) / 2;
 
