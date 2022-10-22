@@ -5,11 +5,15 @@ using UnityEngine;
 
 public class OrbitController : MonoBehaviour
 {
-    private OrbitalBody[] orbitalBodies;
-    private NativeArray<OrbitData> orbitData;
+    public static OrbitController Instance;
+
+    public OrbitalBody[] orbitalBodies;
+    public NativeArray<OrbitData> orbitData;
 
     private void Start()
     {
+        Instance = this;
+
         orbitalBodies = new OrbitalBody[0];
         orbitalBodies = FindObjectsOfType<OrbitalBody>();
 
@@ -37,14 +41,13 @@ public class OrbitController : MonoBehaviour
         orbitalBodies[i].scaledObject.transform.position = (Vector3)((orbitData[i].position / Constants.Scale) - FloatingOrigin.Instance.originPositionScaled);
 
         orbitalBodies[i].velocity = orbitData[i].velocity;
-        orbitalBodies[i].position = orbitData[i].position;
     }
 
     private void UpdateSystem(float time)
     {
         NativeArray<JobHandle> jobHandles = new NativeArray<JobHandle>(TimeController.Instance.timeScale, Allocator.TempJob);
 
-        var job = new UpdateSystemBurstJob()
+        var job = new UpdateSystemJob()
         {
             time = Time.deltaTime,
             orbitData = orbitData,
@@ -61,15 +64,17 @@ public class OrbitController : MonoBehaviour
             }
         }
         JobHandle.CompleteAll(jobHandles);
+        
         jobHandles.Dispose();
     }
 }
 
 [BurstCompile(CompileSynchronously = false)]
-public struct UpdateSystemBurstJob : IJob
+public struct UpdateSystemJob : IJob
 {
     [NativeDisableParallelForRestriction]
     public NativeArray<OrbitData> orbitData;
+    [ReadOnly]
     public float time;
 
     public void Execute()

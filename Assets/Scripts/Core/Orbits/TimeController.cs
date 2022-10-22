@@ -15,7 +15,7 @@ public class TimeController : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(850, 10, 400, 40), time + " x" + timeScale.ToString());
+        GUI.Label(new Rect(100, 10, 200, 40), time + " x" + timeScale);
     }
 
     private void Start()

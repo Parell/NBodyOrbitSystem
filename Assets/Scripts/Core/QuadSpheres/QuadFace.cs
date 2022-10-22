@@ -29,17 +29,17 @@ public class QuadFace : Quad
 
     private Func<QuadFace>[] _neighborFaces = new Func<QuadFace>[4]; // Top, Bottom, Left, Right
 
-    public override void Initialise()
+    public override void Initialize()
     {
         AddNeighborFaces();
 
         QuadType = QuadType.Root;
         Face = this;
-        Material = Root.SphereMaterial;
+        Material = Root.data.SphereMaterial;
         Level = 0;
         CentrePoint = Vector3.zero;
 
-        base.Initialise();
+        base.Initialize();
     }
 
     #region Neighbors

@@ -45,7 +45,7 @@ public struct OrbitData
     }
 }
 
-[System.Serializable]
+/* [System.Serializable]
 public class KeplerianElements
 {
     public OrbitalBody parent;
@@ -71,4 +71,4 @@ public class KeplerianElements
         eccentricityVector = (1 / (parent.mass * Constants.G)) * Vector3d.Cross(v, specificAngularMomentum) - (r / Vector3d.Abs(r));
         eccentricity = eccentricityVector.magnitude;
     }
-}
+} */

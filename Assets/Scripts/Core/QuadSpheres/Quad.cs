@@ -76,7 +76,7 @@ public class Quad : MonoBehaviour
 
     public bool IsDirty; // set to true when Quad has changes and needs to be rendered
 
-    public virtual void Initialise()
+    public virtual void Initialize()
     {
         // only allow odd numbers of subdivisions as this simplifies the triangle generation
         if (Subdivisions % 2 == 0)
@@ -410,7 +410,7 @@ public class Quad : MonoBehaviour
 
                 // set elevation
                 v = GetInverseOffsetFromRoot(Face.ApplyElevation(GetOffsetFromRoot(v), uv));
-                
+
                 Vertices[index] = v;
                 UVs[index] = uv;
             }
@@ -523,7 +523,7 @@ public class Quad : MonoBehaviour
         child.StartingNoiseAmplitude = StartingNoiseAmplitude;
         child.SmoothNegativeElevations = SmoothNegativeElevations;
         child.Active = true;
-        child.Initialise();
+        child.Initialize();
 
         _children[(int)type] = child;
     }

@@ -14,100 +14,135 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *************************************************************************/
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-// using NaughtyAttributes;
+using Buttons;
+using UnityEditor;
 using UnityEngine;
 
-/// <summary>
-/// a <see cref="QuadSphere"/> is made up of multiple <see cref="QuadFace"/> objects making up
-/// the Top (YPosFace), Bottom (YNegFace), Front (ZPosFace), Back (ZNegFace), Right (XPosFace)
-/// and Left (XNegFace). Faces on the opposite side of the Sphere from the Player are disabled
-/// to save processing (simple version of Frustrum culling)
-/// </summary>
 public class QuadSphere : MonoBehaviour
 {
-    private GameObject Player;
+    public QuadSphereData data;
 
-    public float Radius;
-    public float surfaceGravity;
-    public float density;
-    [Header("Distances")]
-    public int StartingSubdivisionsPerQuad;
-    public float[] SubdivisionDistances;
-    [Header("Textures")]
-    public Material SphereMaterial;
-    [Header("Elevations")]
-    public bool UseNoiseForElevation;
-    public FastNoise.NoiseType NoiseType;
-    public bool SmoothNegativeElevations;
-    public int NoiseSeed;
-    public float StartingNoiseFrequency;
-    public float StartingNoiseAmplitude;
-    [Header("Atmosphere")]
+    private GameObject localCamera;
+    private QuadFace[] faces;
+    private QuadTriangleCache triangleCache;
+    private bool updating = false;
+    private Mesh mesh;
 
-    private QuadFace[] _faces;
-    private QuadTriangleCache _triangleCache;
-
-    [ContextMenu("Calculate mass")]
-    private void CalculateMass()
+    [Button(Mode = ButtonMode.DisabledInPlayMode, Spacing = ButtonSpacing.Before)]
+    private void Generate()
     {
-        GetComponent<OrbitalBody>().mass = surfaceGravity * (Radius * Radius) / Constants.G;
+        CalculateMass();
 
-        density = (float)(GetComponent<OrbitalBody>().mass / (Radius * Radius));
+        localCamera = GameObject.Find("LocalCamera");
+
+        for (int i = this.transform.childCount - 1; i >= 0; i--)
+        {
+            DestroyImmediate(this.transform.GetChild(i).gameObject);
+        }
+
+        // only allow odd numbers of subdivisions as this simplifies the maths
+        if (data.StartingSubdivision % 2 == 0)
+        {
+            data.StartingSubdivision++;
+        }
+
+        faces = new QuadFace[6];
+        triangleCache = new QuadTriangleCache(data.StartingSubdivision + 2);
+
+        // create Front
+        AddFace(QuadFaceType.ZPosFront, data.radius * 2, localCamera, data.StartingSubdivision, data.SubdivisionDistances, triangleCache);
+
+        // create Left
+        AddFace(QuadFaceType.XNegLeft, data.radius * 2, localCamera, data.StartingSubdivision, data.SubdivisionDistances, triangleCache);
+
+        // create Right
+        AddFace(QuadFaceType.XPosRight, data.radius * 2, localCamera, data.StartingSubdivision, data.SubdivisionDistances, triangleCache);
+
+        // create Top
+        AddFace(QuadFaceType.YPosTop, data.radius * 2, localCamera, data.StartingSubdivision, data.SubdivisionDistances, triangleCache);
+
+        // create Bottom
+        AddFace(QuadFaceType.YNegBottom, data.radius * 2, localCamera, data.StartingSubdivision, data.SubdivisionDistances, triangleCache);
+
+        // create Back
+        AddFace(QuadFaceType.ZNegBack, data.radius * 2, localCamera, data.StartingSubdivision, data.SubdivisionDistances, triangleCache);
+        Render();
     }
+
+#if (UNITY_EDITOR)
+    [Button(Mode = ButtonMode.DisabledInPlayMode, Spacing = ButtonSpacing.None)]
+    private void ExportMesh()
+    {
+        if (EditorApplication.isPlaying) return;
+        MeshFilter[] meshFilters = transform.GetComponentsInChildren<MeshFilter>();
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+        int i = 0;
+        while (i < meshFilters.Length)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+
+            combine[i].transform = transform.worldToLocalMatrix * meshFilters[i].transform.localToWorldMatrix;
+
+            i++;
+        }
+
+        mesh = new Mesh();
+
+        mesh.CombineMeshes(combine);
+
+        SaveMesh(mesh, gameObject.name, true, true);
+
+        var scaledObject = GetComponent<OrbitalBody>().scaledObject;
+
+        if (scaledObject.GetComponent<MeshFilter>() && scaledObject.GetComponent<MeshRenderer>())
+        {
+            scaledObject.GetComponent<MeshFilter>().mesh = (Mesh)AssetDatabase.LoadAssetAtPath("Assets/" + name + ".asset", typeof(Mesh));
+            scaledObject.GetComponent<MeshRenderer>().material = GetComponent<QuadSphere>().data.SphereMaterial;
+        }
+        else
+        {
+            scaledObject.AddComponent<MeshFilter>().mesh = (Mesh)AssetDatabase.LoadAssetAtPath("Assets/" + name + ".asset", typeof(Mesh));
+            scaledObject.AddComponent<MeshRenderer>().material = GetComponent<QuadSphere>().data.SphereMaterial;
+        }
+
+    }
+
+    public void SaveMesh(Mesh mesh, string name, bool makeNewInstance, bool optimizeMesh)
+    {
+        string path = "Assets/" + name + ".asset";
+
+        Mesh meshToSave = (makeNewInstance) ? Object.Instantiate(mesh) as Mesh : mesh;
+
+        if (optimizeMesh)
+            MeshUtility.Optimize(meshToSave);
+
+        AssetDatabase.CreateAsset(meshToSave, path);
+        AssetDatabase.SaveAssets();
+    }
+#endif
 
     private void Start()
     {
-        Player = GameObject.Find("LocalCamera");
-
-        // only allow odd numbers of subdivisions as this simplifies the maths
-        if (StartingSubdivisionsPerQuad % 2 == 0)
-        {
-            StartingSubdivisionsPerQuad++;
-        }
-
-        _faces = new QuadFace[6];
-        _triangleCache = new QuadTriangleCache(StartingSubdivisionsPerQuad + 2);
-
-        // create Front
-        AddFace(QuadFaceType.ZPosFront, Radius * 2, Player, StartingSubdivisionsPerQuad, SubdivisionDistances, _triangleCache);
-
-        // create Left
-        AddFace(QuadFaceType.XNegLeft, Radius * 2, Player, StartingSubdivisionsPerQuad, SubdivisionDistances, _triangleCache);
-
-        // create Right
-        AddFace(QuadFaceType.XPosRight, Radius * 2, Player, StartingSubdivisionsPerQuad, SubdivisionDistances, _triangleCache);
-
-        // create Top
-        AddFace(QuadFaceType.YPosTop, Radius * 2, Player, StartingSubdivisionsPerQuad, SubdivisionDistances, _triangleCache);
-
-        // create Bottom
-        AddFace(QuadFaceType.YNegBottom, Radius * 2, Player, StartingSubdivisionsPerQuad, SubdivisionDistances, _triangleCache);
-
-        // create Back
-        AddFace(QuadFaceType.ZNegBack, Radius * 2, Player, StartingSubdivisionsPerQuad, SubdivisionDistances, _triangleCache);
-        Render();
+        Generate();
     }
 
     private void Update()
     {
-        StartCoroutine(UpdateFaces(Player.transform.position));
+        StartCoroutine(UpdateFaces(localCamera.transform.position));
         Render();
     }
 
-    private bool _updating = false;
     private IEnumerator UpdateFaces(Vector3 playerPosition)
     {
-        if (!_updating)
+        if (!updating)
         {
-            _updating = true;
+            updating = true;
 
             // perform subdivision if needed
-            foreach (QuadFace face in _faces)
+            foreach (QuadFace face in faces)
             {
                 if (face != null)
                 {
@@ -115,16 +150,16 @@ public class QuadSphere : MonoBehaviour
                 }
             }
 
-            _updating = false;
+            updating = false;
         }
         yield return null;
     }
 
     private void Render()
     {
-        if (_faces != null && _faces.Any())
+        if (faces != null && faces.Any())
         {
-            foreach (QuadFace face in _faces)
+            foreach (QuadFace face in faces)
             {
                 if (face.ShouldRender())
                 {
@@ -132,6 +167,12 @@ public class QuadSphere : MonoBehaviour
                 }
             }
         }
+    }
+
+
+    private void CalculateMass()
+    {
+        GetComponent<OrbitalBody>().mass = data.surfaceGravity * (data.radius * data.radius) / Constants.G;
     }
 
     private void AddFace(QuadFaceType type, float size, GameObject player, int startingSubdivisions, float[] subdivisionDistances, QuadTriangleCache cache)
@@ -173,47 +214,47 @@ public class QuadSphere : MonoBehaviour
         face.Subdivisions = startingSubdivisions;
         face.SubdivisionDistances = subdivisionDistances;
         face.TriangleCache = cache;
-        face.StartingNoiseFrequency = StartingNoiseFrequency;
-        face.StartingNoiseAmplitude = StartingNoiseAmplitude;
-        face.SmoothNegativeElevations = SmoothNegativeElevations;
+        face.StartingNoiseFrequency = data.StartingNoiseFrequency;
+        face.StartingNoiseAmplitude = data.StartingNoiseAmplitude;
+        face.SmoothNegativeElevations = data.SmoothNegativeElevations;
         face.Active = true;
-        face.Initialise();
+        face.Initialize();
 
-        _faces[(int)type] = face;
+        faces[(int)type] = face;
     }
 
     public QuadFace GetQuadFace(QuadFaceType type)
     {
-        return _faces[(int)type];
+        return faces[(int)type];
     }
 
     public Vector3 ApplyElevation(Vector3 v, Vector2 uv)
     {
-        Vector3 curvedVert = v.normalized * Radius;
+        Vector3 curvedVert = v.normalized * data.radius;
         float elevation = 0f;
-        if (UseNoiseForElevation)
+        if (data.UseNoiseForElevation)
         {
-            Elevation.Instance.Noise.SetSeed(NoiseSeed);
-            elevation = Elevation.Instance.Get(curvedVert, StartingNoiseAmplitude,
-            StartingNoiseFrequency, SubdivisionDistances.Length, NoiseType);
+            Elevation.Instance.Noise.SetSeed(data.NoiseSeed);
+            elevation = Elevation.Instance.Get(curvedVert, data.StartingNoiseAmplitude,
+            data.StartingNoiseFrequency, data.SubdivisionDistances.Length, data.NoiseType);
         }
         else
         {
-            if (SphereMaterial != null)
+            if (data.SphereMaterial != null)
             {
-                var parallaxMap = SphereMaterial.GetTexture("_ParallaxMap") as Texture2D;
+                var parallaxMap = data.SphereMaterial.GetTexture("_ParallaxMap") as Texture2D;
                 if (parallaxMap != null)
                 {
-                    elevation = Elevation.Instance.Get(uv, parallaxMap, StartingNoiseAmplitude);
+                    elevation = Elevation.Instance.Get(uv, parallaxMap, data.StartingNoiseAmplitude);
                 }
             }
         }
-        if (SmoothNegativeElevations && elevation < 0)
+        if (data.SmoothNegativeElevations && elevation < 0)
         {
-            elevation = Mathf.Abs(elevation / (SubdivisionDistances.Length / 2));
+            elevation = Mathf.Abs(elevation / (data.SubdivisionDistances.Length / 2));
         }
 
-        Vector3 elevatedVert = v.normalized * (Radius + elevation);
+        Vector3 elevatedVert = v.normalized * (data.radius + elevation);
         return elevatedVert;
     }
 }

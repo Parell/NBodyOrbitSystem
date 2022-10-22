@@ -1,13 +1,22 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
 [ExecuteInEditMode]
 public class OrbitTrajectory : MonoBehaviour
 {
+    public static OrbitTrajectory Instance;
+
     public int numSteps;
     public float timeStep;
+    public float width = 10f;
     public OrbitalBody referenceFrame;
+
+    private void Start()
+    {
+        Instance = this;
+    }
 
     private void Update()
     {
@@ -57,7 +66,7 @@ public class OrbitTrajectory : MonoBehaviour
                     newPos = referenceBodyInitialPosition;
                 }
 
-                drawPoints[i][step] = newPos.ToVector3();
+                drawPoints[i][step] = (Vector3)(newPos - FloatingOrigin.Instance.originPositionScaled);
             }
         }
 
@@ -68,10 +77,17 @@ public class OrbitTrajectory : MonoBehaviour
             {
                 var pathColour = Color.white;
 
-                for (int i = 0; i < drawPoints[bodyIndex].Length - 1; i++)
-                {
-                    Debug.DrawLine(drawPoints[bodyIndex][i], drawPoints[bodyIndex][i + 1], pathColour);
-                }
+                var lineRenderer = orbitalBodies[bodyIndex].scaledObject.GetComponent<LineRenderer>();
+                lineRenderer.positionCount = drawPoints[bodyIndex].Length;
+                lineRenderer.SetPositions(drawPoints[bodyIndex]);
+                lineRenderer.startColor = pathColour;
+                lineRenderer.endColor = pathColour;
+                lineRenderer.widthMultiplier = width;
+
+                // for (int i = 0; i < drawPoints[bodyIndex].Length - 1; i++)
+                // {
+                //     Debug.DrawLine(drawPoints[bodyIndex][i], drawPoints[bodyIndex][i + 1], pathColour);
+                // }
             }
         }
     }
@@ -110,10 +126,54 @@ public class VirtualBody
 }
 
 // [BurstCompile(CompileSynchronously = false)]
-// public struct UpdateAcceleration : IJob
+// public struct UpdateAccelerationJob : IJobParallelFor
 // {
-//     public void Execute()
-//     {
+//     public NativeArray<Vector3d> position;
+//     public NativeArray<Vector3d> velocity;
+//     public NativeArray<double> mass;
+//     public float timeStep;
+//     public int bodyLength;
+//     public Vector3d newPos;
+//     public int bodyIndex;
+//     public int step;
 
+//     public void Execute(int i)
+//     {
+//         //Vector3d referenceBodyPosition = (referenceFrame != null) ? position[referenceFrameIndex] : Vector3d.zero;
+
+//         for (int k = 0; k < bodyLength; k++)
+//         {
+//             Vector3d acceleration = Vector3d.zero;
+
+//             for (int j = 0; j < bodyLength; j++)
+//             {
+//                 if (k == j)
+//                 {
+//                     continue;
+//                 }
+//                 Vector3d forceDir = (position[j] - position[k]).normalized;
+//                 double sqrDst = (position[j] - position[k]).sqrMagnitude;
+//                 acceleration += forceDir * Constants.G * mass[j] / sqrDst;
+//             }
+
+//             velocity[k] += acceleration * timeStep;
+
+//             newPos = position[k] + velocity[k] * timeStep;
+//             position[k] = newPos;
+
+//             bodyIndex = k;
+//             step = i;
+
+//             /*             if (referenceFrame != null)
+//                         {
+//                             Vector3d referenceFrameOffset = referenceBodyPosition - referenceBodyInitialPosition;
+//                             newPos -= referenceFrameOffset;
+//                         }
+//                         if (referenceFrame != null && k == referenceFrameIndex)
+//                         {
+//                             newPos = referenceBodyInitialPosition;
+//                         } */
+
+//         }
 //     }
 // }
