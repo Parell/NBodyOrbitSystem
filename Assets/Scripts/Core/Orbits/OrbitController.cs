@@ -7,8 +7,8 @@ public class OrbitController : MonoBehaviour
 {
     public static OrbitController Instance;
 
-    public OrbitalBody[] orbitalBodies;
-    public NativeArray<OrbitData> orbitData;
+    private OrbitalBody[] orbitalBodies;
+    private NativeArray<OrbitData> orbitData;
 
     private void Start()
     {
@@ -38,7 +38,7 @@ public class OrbitController : MonoBehaviour
     private void DrawBody(int i)
     {
         orbitalBodies[i].transform.position = (Vector3)(orbitData[i].position - FloatingOrigin.Instance.originPosition);
-        orbitalBodies[i].scaledObject.transform.position = (Vector3)((orbitData[i].position / Constants.Scale) - FloatingOrigin.Instance.originPositionScaled);
+        orbitalBodies[i].scaledObject.transform.position = (Vector3)((orbitData[i].position / Constant.Scale) - FloatingOrigin.Instance.originPositionScaled);
 
         orbitalBodies[i].velocity = orbitData[i].velocity;
     }

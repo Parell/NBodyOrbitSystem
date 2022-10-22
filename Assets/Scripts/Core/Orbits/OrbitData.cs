@@ -40,7 +40,7 @@ public struct OrbitData
     public Vector3d CalculateForceOfGravity(Vector3d originBodyPos, double originBodyMass, Vector3d actingBodyPos, double actingBodyMass)
     {
         Vector3d direction = (actingBodyPos - originBodyPos).normalized;
-        double force = Constants.G * (originBodyMass * actingBodyMass / (Vector3d.Distance(originBodyPos, actingBodyPos) * Vector3d.Distance(originBodyPos, actingBodyPos)));
+        double force = Constant.G * (originBodyMass * actingBodyMass / (Vector3d.Distance(originBodyPos, actingBodyPos) * Vector3d.Distance(originBodyPos, actingBodyPos)));
         return force * direction;
     }
 }

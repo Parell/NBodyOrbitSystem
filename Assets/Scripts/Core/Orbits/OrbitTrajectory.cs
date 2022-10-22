@@ -65,7 +65,7 @@ public class OrbitTrajectory : MonoBehaviour
                     newPos = referenceBodyInitialPosition;
                 }
 
-                drawPoints[i][step] = (Vector3)(newPos) / Constants.Scale;
+                drawPoints[i][step] = (Vector3)(newPos) / Constant.Scale;
             }
         }
 
@@ -95,7 +95,7 @@ public class OrbitTrajectory : MonoBehaviour
             }
             Vector3d forceDir = (virtualBodies[j].position - virtualBodies[i].position).normalized;
             double sqrDst = (virtualBodies[j].position - virtualBodies[i].position).sqrMagnitude;
-            acceleration += forceDir * Constants.G * virtualBodies[j].mass / sqrDst;
+            acceleration += forceDir * Constant.G * virtualBodies[j].mass / sqrDst;
         }
         return acceleration;
     }

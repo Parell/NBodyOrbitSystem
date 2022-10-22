@@ -15,10 +15,10 @@ public class ScaledCamera : MonoBehaviour
 
     private void Update()
     {
-        transform.position = (FloatingOrigin.Instance.currentPosition.ToVector3() / Constants.Scale) - FloatingOrigin.Instance.originPositionScaled.ToVector3();
+        transform.position = (FloatingOrigin.Instance.currentPosition.ToVector3() / Constant.Scale) - FloatingOrigin.Instance.originPositionScaled.ToVector3();
         transform.rotation = localCamera.transform.rotation;
 
-        scaledCamera.nearClipPlane = (localCamera.farClipPlane * nearClipOffset) / Constants.Scale;
-        scaledCamera.farClipPlane = unscaledFarClipPlane / Constants.Scale;
+        scaledCamera.nearClipPlane = (localCamera.farClipPlane * nearClipOffset) / Constant.Scale;
+        scaledCamera.farClipPlane = unscaledFarClipPlane / Constant.Scale;
     }
 }

@@ -99,12 +99,12 @@ public class QuadSphere : MonoBehaviour
 
         if (scaledObject.GetComponent<MeshFilter>() && scaledObject.GetComponent<MeshRenderer>())
         {
-            scaledObject.GetComponent<MeshFilter>().mesh = (Mesh)AssetDatabase.LoadAssetAtPath("Assets/" + name + ".asset", typeof(Mesh));
+            scaledObject.GetComponent<MeshFilter>().mesh = (Mesh)AssetDatabase.LoadAssetAtPath("Assets/Resources/Models/" + name + ".asset", typeof(Mesh));
             scaledObject.GetComponent<MeshRenderer>().material = GetComponent<QuadSphere>().data.SphereMaterial;
         }
         else
         {
-            scaledObject.AddComponent<MeshFilter>().mesh = (Mesh)AssetDatabase.LoadAssetAtPath("Assets/" + name + ".asset", typeof(Mesh));
+            scaledObject.AddComponent<MeshFilter>().mesh = (Mesh)AssetDatabase.LoadAssetAtPath("Assets/Resources/Models/" + name + ".asset", typeof(Mesh));
             scaledObject.AddComponent<MeshRenderer>().material = GetComponent<QuadSphere>().data.SphereMaterial;
         }
 
@@ -112,7 +112,7 @@ public class QuadSphere : MonoBehaviour
 
     public void SaveMesh(Mesh mesh, string name, bool makeNewInstance, bool optimizeMesh)
     {
-        string path = "Assets/" + name + ".asset";
+        string path = "Assets/Resources/Models/" + name + ".asset";
 
         Mesh meshToSave = (makeNewInstance) ? Object.Instantiate(mesh) as Mesh : mesh;
 
@@ -172,7 +172,7 @@ public class QuadSphere : MonoBehaviour
 
     private void CalculateMass()
     {
-        GetComponent<OrbitalBody>().mass = data.surfaceGravity * (data.radius * data.radius) / Constants.G;
+        GetComponent<OrbitalBody>().mass = data.surfaceGravity * (data.radius * data.radius) / Constant.G;
     }
 
     private void AddFace(QuadFaceType type, float size, GameObject player, int startingSubdivisions, float[] subdivisionDistances, QuadTriangleCache cache)

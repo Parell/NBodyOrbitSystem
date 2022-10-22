@@ -27,7 +27,7 @@ public class FloatingOrigin : MonoBehaviour
     // private ParticleSystem.Particle[] parts = null;
     // private VisualEffect[] visualEffect = null;
 
-    private void Start()
+    private void Awake()
     {
         Instance = this;
     }

@@ -1,266 +1,190 @@
 using UnityEngine;
+using System.Collections;
 
-public class CameraController : MonoBehaviour
-{
-    // [SerializeField]
-    // Transform focus = default;
+public enum ZoomMode {
+    CameraFieldOfView,
+    ZAxisDistance
+}
 
-    // [SerializeField, Range(1f, 20000)]
-    // float distance = 5f;
+public class CameraMotionControls : MonoBehaviour {
 
-    // [SerializeField, Min(0f)]
-    // float focusRadius = 5f;
+    [Header("Automatic Rotation")]
+    [Tooltip("Toggles whether the camera will automatically rotate around it's target")]
+    public bool autoRotate = true;
+    [Tooltip("The speed at which the camera will auto-pan.")]
+    public float rotationSpeed = 0.1f;
+    [Tooltip("The rotation along the y-axis the camera will have at start.")]
+    public float startRotation = 180;
+    [Header("Manual Rotation")]
+    [Tooltip("The smoothness coming to a stop of the camera afer the uses pans the camera and releases. Lower values result in significantly smoother results. This means the camera will take longer to stop rotating")]
+    public float rotationSmoothing = 2f;
+    [Tooltip("The object the camera will focus on.")]
+    public Transform target;
+    [Tooltip("How sensative the camera-panning is when the user pans -- the speed of panning.")]
+    public float rotationSensitivity = 1f;
+    [Tooltip("The min and max distance along the Y-axis the camera is allowed to move when panning.")]
+    public Vector2 rotationLimit = new Vector2(5, 80);
+    [Tooltip("The position along the Z-axis the camera game object is.")]
+    public float zAxisDistance = 0.45f;
+    [Header("Zooming")]
+    [Tooltip("Whether the camera should zoom by adjusting it's FOV or by moving it closer/further along the z-axis")]
+    public ZoomMode zoomMode = ZoomMode.CameraFieldOfView;
+    [Tooltip("The minimum and maximum range the camera can zoon using the camera's FOV.")]
+    public Vector2 cameraZoomRangeFOV = new Vector2(10, 60);
+    [Tooltip("The minimum and maximum range the camera can zoon using the camera's z-axis position.")]
+    public Vector2 cameraZoomRangeZAxis = new Vector2(10, 60);
+    public float zoomSoothness = 10f;
+    [Tooltip("How sensative the camera zooming is -- the speed of the zooming.")]
+    public float zoomSensitivity = 2;
 
-    // [SerializeField, Range(0f, 1f)]
-    // float focusCentering = 0.5f;
+    new private Camera camera;
+    private float cameraFieldOfView;
+    new private Transform transform;
+    private float xVelocity;
+    private float yVelocity;
+    private float xRotationAxis;
+    private float yRotationAxis;
+    private float zoomVelocity;
+    private float zoomVelocityZAxis;
 
-    // [SerializeField, Range(1f, 360f)]
-    // float rotationSpeed = 90f;
-
-    // [SerializeField, Range(-89f, 89f)]
-    // float minVerticalAngle = -45f, maxVerticalAngle = 45f;
-
-    // [SerializeField]
-    // private float _yawLimit = 45f;
-
-    // [SerializeField]
-    // private float _pitchLimit = 45;
-
-    // public float YawLimit { get { return _yawLimit; } }
-    // public float PitchLimit { get { return _pitchLimit; } }
-
-    // [SerializeField, Min(0f)]
-    // float alignDelay = 5f;
-
-    // [SerializeField, Range(0f, 90f)]
-    // float alignSmoothRange = 45f;
-
-    // [SerializeField]
-    // LayerMask obstructionMask = -1;
-
-    // Camera regularCamera;
-
-    // Vector3 focusPoint, previousFocusPoint;
-
-    // Vector2 orbitAngles = new Vector2(45f, 0f);
-
-    // float lastManualRotationTime;
-
-    // Vector3 CameraHalfExtends
-    // {
-    //     get
-    //     {
-    //         Vector3 halfExtends;
-    //         halfExtends.y =
-    //             regularCamera.nearClipPlane *
-    //             Mathf.Tan(0.5f * Mathf.Deg2Rad * regularCamera.fieldOfView);
-    //         halfExtends.x = halfExtends.y * regularCamera.aspect;
-    //         halfExtends.z = 0f;
-    //         return halfExtends;
-    //     }
-    // }
-
-    // void OnValidate()
-    // {
-    //     if (maxVerticalAngle < minVerticalAngle)
-    //     {
-    //         maxVerticalAngle = minVerticalAngle;
-    //     }
-    // }
-
-    // void Awake()
-    // {
-    //     regularCamera = GetComponent<Camera>();
-    //     focusPoint = focus.position;
-    //     transform.localRotation = Quaternion.Euler(orbitAngles);
-    // }
-
-    // void FixedUpdate()
-    // {
-    //     UpdateFocusPoint();
-    //     Quaternion lookRotation;
-    //     if (ManualRotation() || AutomaticRotation())
-    //     {
-    //         ConstrainAngles();
-    //         lookRotation = Quaternion.Euler(orbitAngles);
-    //     }
-    //     else
-    //     {
-    //         lookRotation = transform.localRotation;
-    //     }
-
-    //     Vector3 lookDirection = lookRotation * Vector3.forward;
-    //     Vector3 lookPosition = focusPoint - lookDirection * distance;
-
-    //     Vector3 rectOffset = lookDirection * regularCamera.nearClipPlane;
-    //     Vector3 rectPosition = lookPosition + rectOffset;
-    //     Vector3 castFrom = focus.position;
-    //     Vector3 castLine = rectPosition - castFrom;
-    //     float castDistance = castLine.magnitude;
-    //     Vector3 castDirection = castLine / castDistance;
-
-    //     if (Physics.BoxCast(
-    //         castFrom, CameraHalfExtends, castDirection, out RaycastHit hit,
-    //         lookRotation, castDistance, obstructionMask
-    //     ))
-    //     {
-    //         rectPosition = castFrom + castDirection * hit.distance;
-    //         lookPosition = rectPosition - rectOffset;
-    //     }
-
-    //     transform.SetPositionAndRotation(lookPosition, lookRotation);
-    // }
-
-    // void UpdateFocusPoint()
-    // {
-    //     previousFocusPoint = focusPoint;
-    //     Vector3 targetPoint = focus.position;
-    //     if (focusRadius > 0f)
-    //     {
-    //         float distance = Vector3.Distance(targetPoint, focusPoint);
-    //         float t = 1f;
-    //         if (distance > 0.01f && focusCentering > 0f)
-    //         {
-    //             t = Mathf.Pow(1f - focusCentering, Time.unscaledDeltaTime);
-    //         }
-    //         if (distance > focusRadius)
-    //         {
-    //             t = Mathf.Min(t, focusRadius / distance);
-    //         }
-    //         focusPoint = Vector3.Lerp(targetPoint, focusPoint, t);
-    //     }
-    //     else
-    //     {
-    //         focusPoint = targetPoint;
-    //     }
-    // }
-
-    // bool ManualRotation()
-    // {
-    //     Vector2 input = new Vector2(
-    //         -Input.GetAxis("Mouse Y"),
-    //         Input.GetAxis("Mouse X")
-    //     );
-    //     const float e = 0.001f;
-    //     if (input.x < -e || input.x > e || input.y < -e || input.y > e)
-    //     {
-    //         orbitAngles += rotationSpeed * Time.unscaledDeltaTime * input;
-    //         lastManualRotationTime = Time.unscaledTime;
-    //         return true;
-    //     }
-    //     return false;
-    // }
-
-    // bool AutomaticRotation()
-    // {
-    //     if (Time.unscaledTime - lastManualRotationTime < alignDelay)
-    //     {
-    //         return false;
-    //     }
-
-    //     Vector2 movement = new Vector2(
-    //         focusPoint.x - previousFocusPoint.x,
-    //         focusPoint.z - previousFocusPoint.z
-    //     );
-    //     float movementDeltaSqr = movement.sqrMagnitude;
-    //     if (movementDeltaSqr < 0.0001f)
-    //     {
-    //         return false;
-    //     }
-
-    //     float headingAngle = GetAngle(movement / Mathf.Sqrt(movementDeltaSqr));
-    //     float deltaAbs = Mathf.Abs(Mathf.DeltaAngle(orbitAngles.y, headingAngle));
-    //     float rotationChange =
-    //         rotationSpeed * Mathf.Min(Time.unscaledDeltaTime, movementDeltaSqr);
-    //     if (deltaAbs < alignSmoothRange)
-    //     {
-    //         rotationChange *= deltaAbs / alignSmoothRange;
-    //     }
-    //     else if (180f - deltaAbs < alignSmoothRange)
-    //     {
-    //         rotationChange *= (180f - deltaAbs) / alignSmoothRange;
-    //     }
-    //     orbitAngles.y =
-    //         Mathf.MoveTowardsAngle(orbitAngles.y, headingAngle, rotationChange);
-    //     return true;
-    // }
-
-    // void ConstrainAngles()
-    // {
-    //     orbitAngles.x =
-    //         Mathf.Clamp(orbitAngles.x, minVerticalAngle, maxVerticalAngle);
-
-    //     if (orbitAngles.y < 0f)
-    //     {
-    //         orbitAngles.y += 360f;
-    //     }
-    //     else if (orbitAngles.y >= 360f)
-    //     {
-    //         orbitAngles.y -= 360f;
-    //     }
-    // }
-
-    // static float GetAngle(Vector2 direction)
-    // {
-    //     float angle = Mathf.Acos(direction.y) * Mathf.Rad2Deg;
-    //     return direction.x < 0f ? 360f - angle : angle;
-    // }
-    [SerializeField] private float speed;
-    [SerializeField] private float minSpeed = 0.1f;
-    [SerializeField] private float maxSpeed = 10000000;
-    [SerializeField] private float scrollPower = 10;
-
-    private void OnGUI()
-    {
-        GUI.Label(new Rect(10, 10, 200, 40), speed.ToString());
+    private void Awake () {
+        camera = GetComponent<Camera>();
+        transform = GetComponent<Transform>();
     }
 
-    private void Update()
-    {
-        FreeCamera();
+    private void Start () {
+        cameraFieldOfView = camera.fieldOfView;
+        //Sets the camera's rotation along the y axis.
+        //The reason we're dividing by rotationSpeed is because we'll be multiplying by rotationSpeed in LateUpdate.
+        //So we're just accouinting for that at start.
+        xRotationAxis = startRotation / rotationSpeed;
     }
 
-    private void FreeCamera()
-    {
-        if (Input.GetMouseButton(1))
-        {
-            transform.eulerAngles += new Vector3(-Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"), 0);
-        }
+    private void Update () {
+        Zoom();
+    }
 
-        if (Input.GetAxis("Mouse ScrollWheel") > 0)
-        {
-            speed += speed * Time.deltaTime * scrollPower;
+    private void LateUpdate () {
+        //If auto rotation is enabled, just increment the xVelocity value by the rotationSensitivity.
+        //As that value's tied to the camera's rotation, it'll rotate automatically.
+        if (autoRotate) {
+            xVelocity += rotationSensitivity * Time.deltaTime;
         }
-        if (Input.GetAxis("Mouse ScrollWheel") < 0)
-        {
-            speed -= speed * Time.deltaTime * scrollPower;
-        }
+        if (target) {
+            Quaternion rotation;
+            Vector3 position;
+            float deltaTime = Time.deltaTime;
 
-        speed = Mathf.Clamp(speed, minSpeed, maxSpeed);
+            //We only really want to capture the position of the cursor when the screen when the user is holding down left click/touching the screen
+            //That's why we're checking for that before campturing the mouse/finger position.
+            //Otherwise, on a computer, the camera would move whenever the cursor moves. 
+            if (Input.GetMouseButton(0)) {
+                xVelocity += Input.GetAxis("Mouse X") * rotationSensitivity;
+                yVelocity -= Input.GetAxis("Mouse Y") * rotationSensitivity;
+            }
 
-        if (Input.GetKey(KeyCode.W))
-        {
-            transform.position += transform.forward * Time.deltaTime * speed;
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            transform.position -= transform.forward * Time.deltaTime * speed;
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            transform.position -= transform.right * Time.deltaTime * speed;
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.position += transform.right * Time.deltaTime * speed;
-        }
-        if (Input.GetKey(KeyCode.E))
-        {
-            transform.position += transform.up * Time.deltaTime * speed;
-        }
-        if (Input.GetKey(KeyCode.Q))
-        {
-            transform.position -= transform.up * Time.deltaTime * speed;
+            xRotationAxis += xVelocity;
+            yRotationAxis += yVelocity;
+
+            //Clamp the rotation along the y-axis between the limits we set. 
+            //Limits of 360 or -360 on any axis will allow the camera to rotate unrestricted
+            yRotationAxis = ClampAngleBetweenMinAndMax(yRotationAxis, rotationLimit.x, rotationLimit.y);
+
+            rotation = Quaternion.Euler(yRotationAxis, xRotationAxis * rotationSpeed, 0);
+            position = rotation * new Vector3(0f, 0f, -zAxisDistance) + target.position;
+
+            transform.rotation = rotation;
+            transform.position = position;
+
+            xVelocity = Mathf.Lerp(xVelocity, 0, deltaTime * rotationSmoothing);
+            yVelocity = Mathf.Lerp(yVelocity, 0, deltaTime * rotationSmoothing);
         }
     }
+
+    private void Zoom () {
+        float deltaTime = Time.deltaTime;
+
+        /*If the user's on a touch screen device like:
+        an Android iOS or Windows phone/tablet, we'll detect if there are two fingers touching the screen.
+        If the touches are moving closer together from where they began, we zoom out.
+        If the touches are moving further apart, then we zoom in.*/
+        #if UNITY_ANDROID || UNITY_IOS || UNITY_WSA
+            if (Input.touchCount == 2) {
+                Touch touch0 = Input.GetTouch(0);
+                Touch touch1 = Input.GetTouch(1);
+                Vector2 touch0PrevPos = touch0.position - touch0.deltaPosition;
+                Vector2 touch1PrevPos = touch1.position - touch1.deltaPosition;
+                float prevTouchDeltaMag = (touch0PrevPos - touch1PrevPos).magnitude;
+                float touchDeltaMag = (touch0.position - touch1.position).magnitude;
+                float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+
+                camera.fieldOfView = cameraFieldOfView;
+                cameraFieldOfView += deltaMagnitudeDiff * zoomSensitivity;
+                cameraFieldOfView = Mathf.Clamp(cameraFieldOfView, cameraZoomRangeFOV.x, cameraZoomRangeFOV.y);
+            }
+        #endif
+
+        //Zooms the camera in using the mouse scroll wheel
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f) {
+            if (zoomMode == ZoomMode.CameraFieldOfView) {
+                cameraFieldOfView = Mathf.SmoothDamp(cameraFieldOfView, cameraZoomRangeFOV.x, ref zoomVelocity, deltaTime * zoomSoothness);
+
+                //prevents the field of view from going below the minimum value
+                if (cameraFieldOfView <= cameraZoomRangeFOV.x) {
+                    cameraFieldOfView = cameraZoomRangeFOV.x;
+                }
+            }
+            else {
+                if (zoomMode == ZoomMode.ZAxisDistance) {
+                    zAxisDistance = Mathf.SmoothDamp(zAxisDistance, cameraZoomRangeZAxis.x, ref zoomVelocityZAxis, deltaTime * zoomSoothness);
+
+                    //prevents the z axis distance from going below the minimum value
+                    if (zAxisDistance <= cameraZoomRangeZAxis.x) {
+                        zAxisDistance = cameraZoomRangeZAxis.x;
+                    }
+                }
+            }
+        }
+        else {
+            //Zooms the camera out using the mouse scroll wheel
+            if (Input.GetAxis("Mouse ScrollWheel") < 0f) {
+                if (zoomMode == ZoomMode.CameraFieldOfView) {
+                    cameraFieldOfView = Mathf.SmoothDamp(cameraFieldOfView, cameraZoomRangeFOV.y, ref zoomVelocity, deltaTime * zoomSoothness);
+
+                    //prevents the field of view from exceeding the max value
+                    if (cameraFieldOfView >= cameraZoomRangeFOV.y) {
+                        cameraFieldOfView = cameraZoomRangeFOV.y;
+                    }
+                }
+                else {
+                    if (zoomMode == ZoomMode.ZAxisDistance) {
+                        zAxisDistance = Mathf.SmoothDamp(zAxisDistance, cameraZoomRangeZAxis.y, ref zoomVelocityZAxis, deltaTime * zoomSoothness);
+
+                        //prevents the z axis distance from exceeding the max value
+                        if (zAxisDistance >= cameraZoomRangeZAxis.y) {
+                            zAxisDistance = cameraZoomRangeZAxis.y;
+                        }
+                    }
+                }
+
+            }
+        }
+
+        //We're just ensuring that when we're zooming using the camera's FOV, that the FOV will be updated to match the value we got when we scrolled.
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 || Input.GetAxis("Mouse ScrollWheel") < 0) {
+            camera.fieldOfView = cameraFieldOfView;
+        }
+    }
+
+    //Prevents the camera from locking after rotating a certain amount if the rotation limits are set to 360 degrees.
+    private float ClampAngleBetweenMinAndMax (float angle, float min, float max) {
+        if (angle < -360) {
+            angle += 360;
+        }
+        if (angle > 360) {
+            angle -= 360;
+        }
+        return Mathf.Clamp(angle, min, max);
+    }
+
 }

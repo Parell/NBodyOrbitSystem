@@ -16,7 +16,7 @@ public class OrbitalBody : MonoBehaviour
     private void Update()
     {
         if (EditorApplication.isPlaying) return;
-        transform.position = scaledObject.transform.position * Constants.Scale;
+        transform.position = scaledObject.transform.position * Constant.Scale;
     }
 
     [Button(Mode = ButtonMode.DisabledInPlayMode, Spacing = ButtonSpacing.Before)]
@@ -29,9 +29,10 @@ public class OrbitalBody : MonoBehaviour
 
         scaledObject = new GameObject(gameObject.name + "_Scaled");
         scaledObject.transform.parent = parent.transform;
-        scaledObject.transform.position = transform.position / Constants.Scale;
+        scaledObject.transform.position = transform.position / Constant.Scale;
         scaledObject.layer = 6;
-        scaledObject.transform.localScale = Vector3.one / Constants.Scale;
+        scaledObject.transform.localScale = Vector3.one / Constant.Scale;
+        scaledObject.transform.rotation = transform.rotation;
     }
 #endif
 
