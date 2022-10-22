@@ -10,7 +10,6 @@ public class OrbitTrajectory : MonoBehaviour
 
     public int numSteps;
     public float timeStep;
-    public float width = 10f;
     public OrbitalBody referenceFrame;
 
     private void Start()
@@ -66,7 +65,7 @@ public class OrbitTrajectory : MonoBehaviour
                     newPos = referenceBodyInitialPosition;
                 }
 
-                drawPoints[i][step] = (Vector3)(newPos - FloatingOrigin.Instance.originPositionScaled);
+                drawPoints[i][step] = (Vector3)(newPos) / Constants.Scale;
             }
         }
 
@@ -77,17 +76,10 @@ public class OrbitTrajectory : MonoBehaviour
             {
                 var pathColour = Color.white;
 
-                var lineRenderer = orbitalBodies[bodyIndex].scaledObject.GetComponent<LineRenderer>();
-                lineRenderer.positionCount = drawPoints[bodyIndex].Length;
-                lineRenderer.SetPositions(drawPoints[bodyIndex]);
-                lineRenderer.startColor = pathColour;
-                lineRenderer.endColor = pathColour;
-                lineRenderer.widthMultiplier = width;
-
-                // for (int i = 0; i < drawPoints[bodyIndex].Length - 1; i++)
-                // {
-                //     Debug.DrawLine(drawPoints[bodyIndex][i], drawPoints[bodyIndex][i + 1], pathColour);
-                // }
+                for (int i = 0; i < drawPoints[bodyIndex].Length - 1; i++)
+                {
+                    Debug.DrawLine(drawPoints[bodyIndex][i], drawPoints[bodyIndex][i + 1], pathColour);
+                }
             }
         }
     }

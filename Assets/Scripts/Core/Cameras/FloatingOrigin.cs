@@ -24,8 +24,8 @@ public class FloatingOrigin : MonoBehaviour
     public List<Transform> localTransforms;
     public List<Transform> scaledTransforms;
 
-    private ParticleSystem.Particle[] parts = null;
-    private VisualEffect[] visualEffect = null;
+    // private ParticleSystem.Particle[] parts = null;
+    // private VisualEffect[] visualEffect = null;
 
     private void Start()
     {

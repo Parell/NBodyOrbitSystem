@@ -418,7 +418,7 @@ GameObject:
   m_Component:
   - component: {fileID: 51130287}
   m_Layer: 0
-  m_Name: -------- Solar System ---------
+  m_Name: -------- Solar System --------
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6737,9 +6737,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10000000
-  minSpeed: 0.1
+  minSpeed: 1
   maxSpeed: 100000000
-  scrollPower: 10
+  scrollPower: 100
 --- !u!114 &380140672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8316,11 +8316,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 470526863}
-  - component: {fileID: 470526865}
   - component: {fileID: 470526862}
   - component: {fileID: 470526861}
   - component: {fileID: 470526860}
   - component: {fileID: 470526864}
+  - component: {fileID: 470526865}
   m_Layer: 0
   m_Name: Controllers
   m_TagString: Untagged
@@ -8371,9 +8371,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originThreshold: 6000
-  UpdateParticles: 1
-  UpdateTrailRenderers: 1
-  UpdateLineRenderers: 1
   localCamera: {fileID: 380140674}
   currentPosition:
     x: 0
@@ -8420,12 +8417,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 470526857}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3035d1340448e624285a06d9465a1835, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numSteps: 285
+  numSteps: 1000
   timeStep: 50
   width: 200000
   referenceFrame: {fileID: 1088942239}
@@ -8442,7 +8439,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timer: 0
-  refresh: 0
+  refresh: 0.5
   avgFramerate: 0
 --- !u!21 &471677404
 Material:
@@ -11163,7 +11160,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5f3d6a0de3495be45a617031d638fbbc, type: 2}
+  - {fileID: 2100000, guid: 909deabc7d2054347b852d426e1c18a1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -18266,7 +18263,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5f3d6a0de3495be45a617031d638fbbc, type: 2}
+  - {fileID: 2100000, guid: 909deabc7d2054347b852d426e1c18a1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
