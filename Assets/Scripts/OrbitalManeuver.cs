@@ -4,12 +4,21 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class OrbitalManeuver : MonoBehaviour
 {
-    public OrbitalBody body;
-    public OrbitPropagator prop;
+    public OrbitalBody orbitalBody;
+    public OrbitPropagator orbitPropagator;
     public ManeuverData maneuverData;
 
     private void Update()
     {
+        if (orbitalBody.a >= 0)
+        {
+            orbitPropagator.steps = (int)((orbitalBody.T) / orbitPropagator.stepSize);
+        }
+        else if (orbitalBody.a < 0)
+        {
+            orbitPropagator.steps = 1000;
+        }
+
         // prop.maneuverData = maneuverData;
 
         // if (!maneuverData.done && prop.currentTime >= maneuverData.startTime)

@@ -1,11 +1,5 @@
 using UnityEngine;
 
-public enum StepMode
-{
-    FixedStepSize,
-    AdaptiveStepSize
-}
-
 public enum Integrator
 {
     None,
@@ -17,8 +11,6 @@ public enum Integrator
 public class OrbitPropagator : MonoBehaviour
 {
     public double time;
-    // [Tooltip("Whether the propagator is being run in fixed-step mode or in adaptive-step mode")]
-    // public StepMode stepMode;
     [Tooltip("Intermediate integration steps are taken to ensure that the error never exceeds this value")]
     public double tolerance;
     [Tooltip("The number of seconds propagated")]
@@ -28,10 +20,10 @@ public class OrbitPropagator : MonoBehaviour
     [SerializeField] private float timeScale;
     public Integrator integrator;
     public OrbitalBody referenceFrame;
-
-    private OrbitalBody[] orbitalBodies;
-    private OrbitData[] orbitData;
-    private OrbitData[] virtualOrbitData;
+    [Space]
+    public OrbitalBody[] orbitalBodies;
+    public OrbitData[] orbitData;
+    public OrbitData[] virtualOrbitData;
 
     private void Start()
     {
@@ -41,7 +33,7 @@ public class OrbitPropagator : MonoBehaviour
 
         for (int i = 0; i < orbitalBodies.Length; i++)
         {
-            orbitData[i] = new OrbitData(orbitalBodies[i].cartesian, /* orbitalBodies[i].keplerian, */ i);
+            orbitData[i] = new OrbitData(i, orbitalBodies[i].mass, orbitalBodies[i].velocity, orbitalBodies[i].position);
         }
     }
 
@@ -62,8 +54,8 @@ public class OrbitPropagator : MonoBehaviour
 
         for (int j = 0; j < orbitData.Length; j++)
         {
-            orbitalBodies[j].cartesian = orbitData[j].cartesian;
-            // orbitalBodies[j].keplerian = orbitData[j].keplerian;
+            orbitalBodies[j].velocity = orbitData[j].velocity;
+            orbitalBodies[j].position = orbitData[j].position;
         }
     }
 
@@ -74,10 +66,6 @@ public class OrbitPropagator : MonoBehaviour
             OrbitData orbitalBody = orbitData[j];
             orbitalBody.CalculateGravitationalAcceleration(orbitData);
             orbitalBody.AddForce(time, integrator);
-            // if (timeScale < 2)
-            // {
-            //     orbitalBody.CartesianToKeplerian(orbitData[0].cartesian, orbitData[1].cartesian);
-            // }
             orbitData[j] = orbitalBody;
         }
         return orbitData;
@@ -95,27 +83,27 @@ public class OrbitPropagator : MonoBehaviour
 
         for (int i = 0; i < orbitalBodies.Length; i++)
         {
-            virtualOrbitData[i] = new OrbitData(orbitalBodies[i].cartesian, /* orbitalBodies[i].keplerian, */ i);
+            virtualOrbitData[i] = new OrbitData(i, orbitalBodies[i].mass, orbitalBodies[i].velocity, orbitalBodies[i].position);
             drawPoints[i] = new Vector3[steps];
 
             if (referenceFrame != null && orbitalBodies[i] == referenceFrame)
             {
                 referenceFrameIndex = i;
-                referenceBodyInitialPosition = virtualOrbitData[i].cartesian.position;
+                referenceBodyInitialPosition = virtualOrbitData[i].position;
             }
         }
 
         for (int step = 0; step < steps; step++)
         {
-            Vector3d referenceBodyPosition = (referenceFrame != null) ? virtualOrbitData[referenceFrameIndex].cartesian.position : Vector3d.zero;
+            Vector3d referenceBodyPosition = (referenceFrame != null) ? virtualOrbitData[referenceFrameIndex].position : Vector3d.zero;
 
             for (int i = 0; i < virtualOrbitData.Length; i++)
             {
                 virtualOrbitData = Propagate(virtualOrbitData, stepSize);
 
-                // virtualOrbitData[0].cartesian.velocity += virtualOrbitData[0].ApplyManeuver(maneuverData, timeScale);
+                // virtualOrbitData[0].velocity += virtualOrbitData[0].ApplyManeuver(maneuverData, timeScale);
 
-                Vector3d nextPosition = virtualOrbitData[i].cartesian.position;
+                Vector3d nextPosition = virtualOrbitData[i].position;
                 if (referenceFrame != null)
                 {
                     var referenceFrameOffset = referenceBodyPosition - referenceBodyInitialPosition;
@@ -126,8 +114,7 @@ public class OrbitPropagator : MonoBehaviour
                     nextPosition = referenceBodyInitialPosition;
                 }
 
-                // drawPoints[i][step] = (Vector3)(nextPosition) / Constant.Scale;
-                drawPoints[i][step] = (Vector3)(nextPosition);
+                drawPoints[i][step] = (Vector3)(nextPosition) / Constant.Scale;
             }
         }
 
