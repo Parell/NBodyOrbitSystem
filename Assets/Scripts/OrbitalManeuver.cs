@@ -6,7 +6,7 @@ public class OrbitalManeuver : MonoBehaviour
 {
     public OrbitalBody orbitalBody;
     public OrbitPropagator orbitPropagator;
-    public ManeuverData maneuverData;
+    public Maneuver maneuver;
 
     private void Update()
     {
@@ -19,30 +19,26 @@ public class OrbitalManeuver : MonoBehaviour
             orbitPropagator.steps = 1000;
         }
 
-        // prop.maneuverData = maneuverData;
-
-        // if (!maneuverData.done && prop.currentTime >= maneuverData.startTime)
-        // {
-        //     for (int i = 0; i < prop.orbitData.Length; i++)
-        //     {
-        //         prop.orbitData[0].cartesian.velocity += prop.orbitData[0].ApplyManeuver(maneuverData, Time.deltaTime);
-        //     }
-
-        //     // direction = ((Vector3)body.cartesian.velocity + direction).normalized;
-        // }
-        // else if (!done && prop.currentTime > (startTime + duration))
-        // {
-        //     done = true;
-        // }
+        orbitPropagator.maneuver = maneuver;
     }
 }
 
 [System.Serializable]
-public struct ManeuverData
+public struct Maneuver
 {
-    public double acceleration;
+    public float acceleration;
     public double duration;
     public double startTime;
+    public string altitudeLock;
     public Vector3 direction;
-    public bool done;
+}
+
+public enum Direction
+{
+    Prograde,
+    Retrograde,
+    Anti_Normal,
+    Normal,
+    Anti_Radial,
+    Radial
 }

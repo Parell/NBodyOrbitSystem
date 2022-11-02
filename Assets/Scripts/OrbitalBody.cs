@@ -67,6 +67,10 @@ public class OrbitalBody : MonoBehaviour
 
         var mu = parent.mass * Constant.G;
 
+
+        var r_vec = position;
+        var v_vec = velocity;
+
         var hVec = Vector3d.Cross(position, velocity);
         var eVec = (Vector3d.Cross(velocity, hVec) / mu) - (position / position.magnitude);
 

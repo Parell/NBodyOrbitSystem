@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.008413775, g: 0.007497265, b: 0.0066884295, a: 1}
+  m_IndirectSpecularColor: {r: 0.008435336, g: 0.00751979, b: 0.0067116274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -171,22 +171,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 10000
   velocity:
-    x: 0
-    y: 0
-    z: 400
+    x: -0.5
+    y: 0.22
+    z: 577
   position:
     x: 200000
     y: 0
     z: 0
-  a: 131531.4427605778
-  e: 0.5205489714277152
-  w: 89.99999007607968
+  a: 199530.22424393025
+  e: 0.0025088140159469268
+  w: 89.9999901234611
   LAN: 179.99998015215937
-  i: 89.99999007607968
-  M: 60.17473427210102
-  E: 89.99999007607968
-  v: 179.99998015215937
-  T: 1160.1694632784126
+  i: 89.97814420174322
+  M: 79.75531977107407
+  E: 79.89683523950806
+  v: 159.84326173185087
+  T: 2167.6546432538944
   parent: {fileID: 1863902092}
   scaledTransform: {fileID: 2121281569}
 --- !u!114 &348157250
@@ -203,12 +203,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orbitalBody: {fileID: 348157249}
   orbitPropagator: {fileID: 837308573}
-  maneuverData:
-    acceleration: 0
-    duration: 0
+  maneuver:
+    acceleration: 10
+    duration: -14.31
     startTime: 0
+    altitudeLock: prograde
     direction: {x: 0, y: 0, z: 0}
-    done: 0
 --- !u!1 &482205371
 GameObject:
   m_ObjectHideFlags: 0
@@ -465,10 +465,16 @@ MonoBehaviour:
   time: 0
   tolerance: 0.0000000001
   stepSize: 1
-  steps: 1160
+  steps: 2167
   timeScale: 0
   integrator: 0
   referenceFrame: {fileID: 1863902092}
+  maneuver:
+    acceleration: 10
+    duration: -14.31
+    startTime: 0
+    altitudeLock: prograde
+    direction: {x: 0, y: 0, z: 0}
   orbitalBodies:
   - {fileID: 348157249}
   - {fileID: 1863902092}
@@ -478,9 +484,9 @@ MonoBehaviour:
     velocity:
       x: 0
       y: 0
-      z: 677.26
+      z: 400
     position:
-      x: 145500
+      x: 200000
       y: 0
       z: 0
     nextAcceleration:
@@ -505,31 +511,31 @@ MonoBehaviour:
   - index: 0
     mass: 10000
     velocity:
-      x: 600.6483515423513
-      y: 0
-      z: 111.4637035190232
+      x: 181.543989709359
+      y: -0.17533170775352297
+      z: -459.84725169901395
     position:
-      x: 84537.88794996431
-      y: 0
-      z: -125379.66514072547
+      x: -253737.18308210716
+      y: -33.023766781822
+      z: -86612.33378686961
     nextAcceleration:
-      x: -1.6145255212177283
-      y: 0
-      z: 2.0192765020878793
+      x: 0.9828580931762047
+      y: 0.0001359275988834323
+      z: 0.3565010207079115
   - index: 1
     mass: 1e+21
     velocity:
-      x: -0.000000000000006004581425201912
-      y: 0
-      z: 0.0000000000000028652965871935166
+      x: -0.000000000000001844515031589858
+      y: 3.95195032913125e-18
+      z: 0.00000000000001036488790867608
     position:
       x: -16400
-      y: 0
-      z: 0.000000000010536661947994475
+      y: 0.00000000000000986898961814735
+      z: 0.000000000025883668225777313
     nextAcceleration:
-      x: 0.000000000000000016154595508908277
-      y: 0
-      z: -0.000000000000000020066377616250722
+      x: -9.822629208959426e-18
+      y: -1.3667484039733e-21
+      z: -3.58460831405725e-18
 --- !u!1 &1353294919
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,6 +21,7 @@ public class OrbitPropagator : MonoBehaviour
     public Integrator integrator;
     public OrbitalBody referenceFrame;
     [Space]
+    public Maneuver maneuver;
     public OrbitalBody[] orbitalBodies;
     public OrbitData[] orbitData;
     public OrbitData[] virtualOrbitData;
@@ -64,8 +65,8 @@ public class OrbitPropagator : MonoBehaviour
         for (int j = 0; j < orbitData.Length; j++)
         {
             OrbitData orbitalBody = orbitData[j];
-            orbitalBody.CalculateGravitationalAcceleration(orbitData);
-            orbitalBody.AddForce(time, integrator);
+            orbitalBody.CalculateGravity(orbitData);
+            orbitalBody.IntagrateAcceleration(time, integrator);
             orbitData[j] = orbitalBody;
         }
         return orbitData;
@@ -101,7 +102,22 @@ public class OrbitPropagator : MonoBehaviour
             {
                 virtualOrbitData = Propagate(virtualOrbitData, stepSize);
 
-                // virtualOrbitData[0].velocity += virtualOrbitData[0].ApplyManeuver(maneuverData, timeScale);
+                if (step * stepSize >= maneuver.startTime)
+                {
+                    if (maneuver.altitudeLock == "prograde")
+                    {
+                        maneuver.direction = ((Vector3)virtualOrbitData[i].velocity).normalized;
+                    }
+
+                    if (maneuver.duration > 0)
+                    {
+                        virtualOrbitData[0].AddConstantAcceleration(maneuver, stepSize);
+                        maneuver.duration -= step * stepSize;
+                    }
+                }
+                else if (step * stepSize > (maneuver.startTime + maneuver.duration))
+                {
+                }
 
                 Vector3d nextPosition = virtualOrbitData[i].position;
                 if (referenceFrame != null)
