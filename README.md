@@ -7,8 +7,8 @@ An old project named <a href="https://github.com/cmdrflexo/RocketFOSS">RocketFos
 ## Minimal viable product
 1. Floating origin & scaled space*
 3. Nbody physics & time system*
-7. Trajectories & maneuvers
-2. Quad sphere & Custum solar system
+7. Trajectories & maneuvers*
+2. Quad sphere & Custum solar system*
 4. Vessel movement
 
 ## Contributing

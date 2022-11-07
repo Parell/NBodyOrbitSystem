@@ -14,7 +14,6 @@ public class FloatingOrigin : MonoBehaviour
     private Transform scaledCamera;
     public Vector3d currentPositionScaled;
     public Vector3d originPositionScaled;
-    [Header("Transforms")]
     public List<Transform> localTransforms;
     public List<Transform> scaledTransforms;
 
@@ -31,11 +30,24 @@ public class FloatingOrigin : MonoBehaviour
         if (localCamera.position.magnitude > originThreshold)
         {
             MoveOrigin(localCamera.position);
+
         }
 
         if (scaledCamera.position.magnitude > originThreshold)
         {
             MoveOriginScaled(scaledCamera.position);
+
+            // var lines = FindObjectsOfType<LineRenderer>() as LineRenderer[];
+            // foreach (var line in lines)
+            // {
+            //     Vector3[] positions = new Vector3[line.positionCount];
+
+            //     int positionCount = line.GetPositions(positions);
+            //     for (int i = 0; i < positionCount; ++i)
+            //         positions[i] -= localCamera.position;
+
+            //     line.SetPositions(positions);
+            // }
         }
     }
 
