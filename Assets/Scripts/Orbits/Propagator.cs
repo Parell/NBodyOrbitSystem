@@ -21,12 +21,16 @@ public class Propagator : MonoBehaviour
     public float stepSize;
     public int steps;
     public Body referenceFrame;
+    public float width;
 
     public Body[] bodies;
     public BodyData[] bodyData;
     public BodyData[] virtualBodyData;
+    
+    public FloatingOrigin floatingOrigin;
 
     private TimeSpan timeSpan;
+    
 
     private void Awake()
     {
@@ -64,7 +68,7 @@ public class Propagator : MonoBehaviour
 
             for (int j = 0; j < bodies.Length; j++)
             {
-                bodies[j].transform.position = (Vector3)bodyData[j].position;
+                //bodies[j].transform.position = (Vector3)bodyData[j].position;
 
                 bodies[j].velocity = bodyData[j].velocity;
                 bodies[j].position = bodyData[j].position;
@@ -115,7 +119,6 @@ public class Propagator : MonoBehaviour
                 // }
                 plotLength = (step * stepSize) * 2;
 
-
                 Vector3d nextPosition = virtualBodyData[i].position;
                 if (referenceFrame != null)
                 {
@@ -127,7 +130,7 @@ public class Propagator : MonoBehaviour
                     nextPosition = referenceBodyInitialPosition;
                 }
 
-                drawPoints[i][step] = (Vector3)(nextPosition)/*  / Constant.Scale - (Vector3)floatingOrigin.originPositionScaled */;
+                drawPoints[i][step] = (Vector3)(nextPosition) / Constant.Scale - (Vector3)floatingOrigin.originPositionScaled;
             }
         }
 
@@ -135,13 +138,12 @@ public class Propagator : MonoBehaviour
         {
             var pathColour = Color.white;
 
-            // var lineRenderer = bodies[bodyIndex].scaledTransform.GetComponent<LineRenderer>();
-            var lineRenderer = bodies[bodyIndex].GetComponent<LineRenderer>();
+            var lineRenderer = bodies[bodyIndex].scaledTransform.GetComponent<LineRenderer>();
             lineRenderer.positionCount = drawPoints[bodyIndex].Length;
             lineRenderer.SetPositions(drawPoints[bodyIndex]);
             lineRenderer.startColor = pathColour;
             lineRenderer.endColor = pathColour;
-            lineRenderer.widthMultiplier = 20;
+            lineRenderer.widthMultiplier = width;
         }
     }
 

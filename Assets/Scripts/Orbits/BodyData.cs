@@ -57,41 +57,50 @@ public struct BodyData
         }
         else if (integratorType == IntegratorType.RungeKutta4)
         {
-            for (int i = 0; i < bodyData.Length; i++)
-            {
-                if (i == index) { continue; }
+            // Vector3d dx1, dv1, dx2, dv2, dx3, dv3, dx4, dv4;
 
-                Vector3d k1, k2, k3, k4;
+            // acceleration += Gravity(bodyData);
 
-                k1 = a(bodyData, position, 0);
-                // k2 = a(bodyData, )
-            }
+            // dx1 = deltaTime * velocity;
+            // dv1 = deltaTime * acceleration;
+            // dx2 = deltaTime * velocity + (dv1 / 2);
+
+
+            // position = position;
+
+            // velocity = velocity;
+
+            // acceleration = Vector3d.zero;
         }
     }
 
-    private Vector3d a(BodyData[] bodyData, Vector3d position, double deltaTime)
-    {
-        var newAcceleration = Vector3d.zero;
-
-        for (int i = 0; i < bodyData.Length; i++)
-        {
-            if (i == index) { continue; }
-
-            Vector3d r = (bodyData[i].position - position);
-
-            newAcceleration += (r * (Constant.G * bodyData[i].mass)) / (r.magnitude * r.magnitude * r.magnitude);
-        }
-
-        return newAcceleration;
-    }
-
-    // private Vector3d V(int i, BodyData[] bodyData, Vector3d vector, double deltaTime)
+    // public void AddConstantAcceleration(Maneuver maneuver, double time)
     // {
-    //     //return velocity + Gravity(vector, bodyData[i].mass);
+    //     maneuver.direction = (maneuver.deltaV + (Vector3)velocity.normalized).normalized;
+    //     Debug.DrawLine((Vector3)position, (Vector3)position + maneuver.direction * maneuver.deltaV.magnitude * 10, Color.red);
+    //     //velocity += (Vector3d)(maneuver.acceleration * (Vector3d)maneuver.direction * time);
+    //     velocity += (Vector3d)maneuver.direction * (maneuver.deltaV.magnitude);
     // }
+}
 
-    // private Vector3d A(int i, BodyData[] bodyData, Vector3d vector, double deltaTime)
-    // {
-    //     //return Gravity(vector, bodyData[i].mass) + Gravity(vector + V(i, bodyData, bodyData[i].position, deltaTime), bodyData[i].mass);
-    // }
+[Serializable]
+public struct Cartesian
+{
+    public Vector3d velocity;
+    public Vector3d position;
+}
+
+[Serializable]
+public struct Keplerian
+{
+    public double a;
+    public double e;
+    public double w;
+    public double LAN;
+    public double i;
+    public double meanAnomaly;
+    public double eAnomaly;
+    public double trueAnomaly;
+    public double T;
+    public Body centralBody;
 }
